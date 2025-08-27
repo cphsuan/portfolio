@@ -1,24 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio Website
+
+A professional, recruiter-focused portfolio website built with Next.js 15, TypeScript, and shadcn/ui.
+
+## Tech Stack
+
+- **Framework:** Next.js 15.5.0 with App Router
+- **Language:** TypeScript (strict mode)
+- **Styling:** Tailwind CSS v4 + shadcn/ui
+- **UI Components:** Radix UI primitives
+- **Build Tool:** Turbopack
+- **Package Manager:** pnpm
+
+## Project Structure
+
+```
+portfolio/
+├── app/                    # Next.js App Router
+├── components/             # React components
+│   ├── ui/                # shadcn/ui components
+│   ├── layout/            # Layout components
+│   ├── sections/          # Page sections
+│   └── shared/            # Shared components
+├── lib/                   # Utilities and constants
+├── hooks/                 # Custom React hooks
+├── types/                 # TypeScript definitions
+├── config/                # Configuration files
+└── content/               # Content data
+```
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+```
+
+Then, run the development server:
+
+```bash
+pnpm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Development Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm run dev    # Start development server with Turbopack
+pnpm run build  # Build for production
+pnpm start      # Start production server
+```
+
+## Features
+
+- ✅ **Phase 1: Core Foundation** (Completed)
+  - Organized folder structure
+  - shadcn/ui integration
+  - ESLint & Prettier configuration
+  - Design system with light/dark mode
+  - Responsive utilities
+  - TypeScript strict mode
+
+- 🚧 **Phase 2: Layout & Navigation** (Next)
+- 🚧 **Phase 3: Content Sections** (Upcoming)
+- 🚧 **Phase 4: Data Management** (Planned)
 
 ## Learn More
 
