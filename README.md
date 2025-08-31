@@ -1,12 +1,14 @@
-# Portfolio Website
+# Vivianne Chao - Portfolio Website
 
-A professional, recruiter-focused portfolio website built with Next.js 15, TypeScript, and shadcn/ui.
+A modern, professional portfolio showcasing frontend engineering expertise with an interactive 3D whale shark visualization. Built with cutting-edge technologies including Next.js 15, TypeScript, Three.js, and a fully responsive design.
 
 ## Tech Stack
 
 - **Framework:** Next.js 15.5.0 with App Router
 - **Language:** TypeScript (strict mode)
 - **Styling:** Tailwind CSS v4 + shadcn/ui
+- **3D Graphics:** Three.js with @react-three/fiber & @react-three/drei
+- **Geometric Processing:** Delaunator for triangulation
 - **UI Components:** Radix UI primitives
 - **Build Tool:** Turbopack
 - **Package Manager:** pnpm
@@ -16,15 +18,29 @@ A professional, recruiter-focused portfolio website built with Next.js 15, TypeS
 ```
 portfolio/
 ├── app/                    # Next.js App Router
-├── components/             # React components
-│   ├── ui/                # shadcn/ui components
+│   ├── layout.tsx         # Root layout with global styles
+│   ├── page.tsx           # Main landing page (modular sections)
+│   └── globals.css        # Global CSS with design system
+├── components/             # React components (modular architecture)
+│   ├── ui/                # shadcn/ui components (Button, Sheet)
 │   ├── layout/            # Layout components
-│   ├── sections/          # Page sections
-│   └── shared/            # Shared components
+│   │   ├── header/        # Header with glassmorphism & scroll effects
+│   │   ├── mobile/        # Mobile navigation with slide-in panel
+│   │   ├── footer/        # Footer with social links
+│   │   └── providers/     # Theme provider wrapper
+│   ├── sections/          # Page sections (fully modular)
+│   │   ├── hero-section.tsx      # Hero with 3D whale shark
+│   │   ├── about-section.tsx     # About, skills, highlights
+│   │   ├── projects-section.tsx  # Featured projects showcase
+│   │   ├── experience-section.tsx # Work experience timeline
+│   │   └── contact-section.tsx   # Contact form & info
+│   └── shared/            # Shared/reusable components
+│       ├── error-boundary.tsx    # Global error boundary
+│       └── whale-shark-3d.tsx    # Interactive 3D visualization
 ├── lib/                   # Utilities and constants
-├── hooks/                 # Custom React hooks
+├── hooks/                 # Custom React hooks (media query, scroll)
 ├── types/                 # TypeScript definitions
-└── config/                # Configuration files
+└── config/                # Configuration files (site, navigation)
 ```
 
 ## Getting Started
@@ -53,26 +69,97 @@ pnpm start      # Start production server
 
 ## Features
 
-- ✅ **Phase 1: Core Foundation** (Completed)
-  - Organized folder structure
-  - shadcn/ui integration
-  - ESLint & Prettier configuration
-  - Design system with light/dark mode
-  - Responsive utilities
-  - TypeScript strict mode
+### ✅ Core Portfolio Features (Completed)
 
-- ✅ **Phase 2: Layout & Navigation** (Completed)
-  - Glassmorphism header with scroll effects
-  - Dark/light theme toggle with next-themes
-  - Mobile-first responsive navigation
-  - Slide-in mobile menu with icons
-  - Smooth scroll navigation
-  - Error boundaries for component reliability
-  - Scroll lock for mobile menu
-  - Centralized site configuration
+**🎨 3D Interactive Visualization**
+- Geometric whale shark with Delaunay triangulation
+- Floating animation effects
+- Responsive 3D positioning across all devices
+- Optimized Three.js performance
 
-- 🚧 **Phase 3: Content Sections** (Next)
-- 🚧 **Phase 4: Data Management** (Upcoming)
+**📱 Responsive Design**
+- Mobile-first approach with breakpoint optimization
+- 30/70 hero layout (text/3D visualization) 
+- Glassmorphism header with scroll effects
+- Dark/light theme support with next-themes
+
+**🏗️ Modular Architecture** 
+- Fully separated section components
+- Reusable and maintainable code structure
+- Individual section imports for performance
+- Clean main page with minimal complexity
+
+**👩‍💻 Professional Content**
+- Authentic frontend engineering portfolio
+- Real project showcases (Perfect Corp SaaS, Lane Detection, Answer Sheet Recognition)
+- Taiwan-based professional profile
+- Comprehensive skills and experience timeline
+
+### ✅ Technical Implementation
+
+**🔧 Phase 1: Foundation**
+- Next.js 15.5.0 with App Router
+- TypeScript strict mode configuration
+- Tailwind CSS v4 design system
+- ESLint & Prettier setup
+- shadcn/ui component integration
+
+**🎯 Phase 2: Navigation & UX**
+- Responsive header with scroll effects
+- Mobile slide-in navigation with scroll lock  
+- Theme toggle with system preference detection
+- Error boundaries for reliability
+- Centralized configuration management
+
+**⚡ Phase 3: Content & Interactivity**
+- Five modular section components
+- 3D whale shark visualization with Three.js
+- Professional content customization
+- Contact form and project showcase
+- Experience timeline with visual design
+
+### 🚀 Coming Soon
+
+**🔗 Phase 4: Enhanced Functionality** 
+- Navigation button functionality
+- Smooth scrolling between sections
+- Contact form submission handling
+- Performance monitoring and analytics
+
+## About This Portfolio
+
+This portfolio showcases **Vivianne Chao**, a Frontend Engineer currently working at Perfect Corp in Taiwan. The portfolio features:
+
+### 🌟 Professional Highlights
+- **Current Role:** Frontend Engineer at Perfect Corp (March 2023 - Present)
+- **Previous Experience:** Data Analyst Intern at Eastern Union Interactive Corp
+- **Education:** M.S. Information Management, NTUST (Computer Graphics & Multimedia Systems Lab)
+- **Location:** New Taipei, Taiwan
+
+### 🛠️ Technical Expertise
+- **Frontend:** React, Next.js, Zustand, TailwindCSS, Jest, JavaScript, TypeScript
+- **Backend & Data:** Java Spring Boot, MySQL, RESTful APIs, Python, R, Solr
+- **Specialties:** Machine Learning, Computer Vision, Payment Integration, SaaS Development
+
+### 📈 Key Projects Featured
+1. **SaaS Console Platform** - Greenfield Next.js project at Perfect Corp
+2. **Lane Detection & Tracking** - Master's thesis with 99.9% accuracy achievement
+3. **Answer Sheet Recognition** - C# system processing 100,000+ images
+4. **CRM System Integration** - React-based system with Stripe/CleverBridge
+5. **Real-time User Analytics** - Tableau dashboards and behavior tracking
+6. **3D Portfolio Website** - This website with Three.js visualization
+
+## Customization Guide
+
+This portfolio can be easily customized for other developers by updating:
+
+1. **Personal Information** in each section component
+2. **Project Details** with your own work and achievements  
+3. **Experience Timeline** with your career history
+4. **Contact Information** with your professional links
+5. **3D Visualization** can be replaced with other Three.js models or removed entirely
+
+See `CLAUDE.md` for detailed customization instructions.
 
 ## Learn More
 
