@@ -177,4 +177,13 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .transform-gpu {
+    transform: translate3d(0, 0, 0);
+  }
 }

@@ -1,24 +1,31 @@
 import { profileConfig } from '@/config/profile'
+import { AnimatedSection } from '@/components/ui/animated-section'
+import { StaggeredGrid } from '@/components/ui/staggered-grid'
 
 export function AboutSection() {
   return (
     <section id="about" className="container mx-auto px-4 py-20">
       <div className="mx-auto max-w-6xl">
-        <h2 className="mb-12 text-center text-3xl font-bold sm:text-4xl">About Me</h2>
+        <AnimatedSection animation="fadeUp" delay={0}>
+          <h2 className="mb-12 text-center text-3xl font-bold sm:text-4xl">About Me</h2>
+        </AnimatedSection>
         
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left column - Introduction */}
-          <div className="space-y-6">
-            <h3 className="text-2xl font-semibold">{profileConfig.bio.title}</h3>
-            <div className="space-y-4 text-muted-foreground">
-              {profileConfig.bio.paragraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+          <AnimatedSection animation="slideLeft" delay={200}>
+            <div className="space-y-6">
+              <h3 className="text-2xl font-semibold">{profileConfig.bio.title}</h3>
+              <div className="space-y-4 text-muted-foreground">
+                {profileConfig.bio.paragraphs.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
             </div>
-          </div>
+          </AnimatedSection>
 
           {/* Right column - Skills & Technologies */}
-          <div className="space-y-6">
+          <AnimatedSection animation="slideRight" delay={300}>
+            <div className="space-y-6">
             <h3 className="text-2xl font-semibold">Technologies I Work With</h3>
             
             <div className="space-y-6">
@@ -55,21 +62,28 @@ export function AboutSection() {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+          </AnimatedSection>
         </div>
 
         {/* Experience highlights */}
-        <div className="mt-16">
-          <h3 className="mb-8 text-center text-2xl font-semibold">Experience Highlights</h3>
-          <div className="grid gap-6 md:grid-cols-3">
-            {profileConfig.highlights.map((highlight) => (
-              <div key={highlight.label} className="bg-muted/30 rounded-lg p-6 text-center">
-                <div className="text-foreground mb-2 text-2xl font-bold">{highlight.value}</div>
-                <div className="text-muted-foreground text-sm">{highlight.label}</div>
-              </div>
-            ))}
+        <AnimatedSection animation="fadeUp" delay={500}>
+          <div className="mt-16">
+            <h3 className="mb-8 text-center text-2xl font-semibold">Experience Highlights</h3>
+            <StaggeredGrid 
+              className="gap-6 md:grid-cols-3"
+              staggerDelay={100}
+              animation="scaleIn"
+            >
+              {profileConfig.highlights.map((highlight) => (
+                <div key={highlight.label} className="bg-muted/30 rounded-lg p-6 text-center transition-all duration-300 hover:bg-muted/40 hover:scale-105 transform-gpu">
+                  <div className="text-foreground mb-2 text-2xl font-bold">{highlight.value}</div>
+                  <div className="text-muted-foreground text-sm">{highlight.label}</div>
+                </div>
+              ))}
+            </StaggeredGrid>
           </div>
-        </div>
+        </AnimatedSection>
       </div>
     </section>
   )

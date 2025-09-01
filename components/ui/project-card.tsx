@@ -6,10 +6,12 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <div className="bg-background group overflow-hidden rounded-lg border shadow-sm transition-all duration-300 hover:shadow-lg">
-      <div className={`bg-gradient-to-br ${project.gradient} aspect-video w-full p-8`}>
+    <div className="bg-background group overflow-hidden rounded-lg border shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-black/10 hover:-translate-y-2 hover:scale-[1.02] transform-gpu">
+      <div className={`bg-gradient-to-br ${project.gradient} aspect-video w-full p-8 transition-all duration-500 group-hover:scale-105`}>
         <div className="flex h-full items-center justify-center">
-          <div className="text-6xl opacity-50">{project.icon}</div>
+          <div className="text-6xl opacity-50 transition-all duration-500 group-hover:scale-110 group-hover:opacity-70">
+            {project.icon}
+          </div>
         </div>
       </div>
       <div className="p-6">
