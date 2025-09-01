@@ -1,0 +1,10 @@
+export { siteConfig } from './site'
+export { navItems, socialLinks } from './navigation'
+export { profileConfig } from './profile'
+export { projectsConfig } from './projects'
+export { experienceConfig, educationConfig, certificationsConfig } from './experience'
+
+export type { SiteConfig } from './site'
+export type { ProfileConfig } from './profile'
+export type { Project } from './projects'
+export type { Experience, Education } from './experience'

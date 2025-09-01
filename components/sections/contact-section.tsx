@@ -2,9 +2,9 @@ export function ContactSection() {
   return (
     <section id="contact" className="container mx-auto px-4 py-20">
       <div className="mx-auto max-w-4xl">
-        <h2 className="mb-4 text-center text-3xl font-bold sm:text-4xl">Let's Work Together</h2>
+        <h2 className="mb-4 text-center text-3xl font-bold sm:text-4xl">Let&apos;s Work Together</h2>
         <p className="text-muted-foreground mb-16 text-center text-lg">
-          Ready to collaborate on innovative SaaS solutions? Let's connect!
+          Ready to collaborate on innovative SaaS solutions? Let&apos;s connect!
         </p>
 
         <div className="grid gap-12 lg:grid-cols-2">
@@ -53,7 +53,7 @@ export function ContactSection() {
             </div>
 
             <div>
-              <h4 className="mb-4 text-lg font-semibold">What I'm Looking For</h4>
+              <h4 className="mb-4 text-lg font-semibold">What I&apos;m Looking For</h4>
               <div className="space-y-3 text-sm text-muted-foreground">
                 <div className="flex items-center gap-3">
                   <div className="bg-green-500/20 text-green-600 h-2 w-2 rounded-full"></div>
@@ -140,7 +140,7 @@ export function ContactSection() {
           <div className="bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-teal-500/10 rounded-2xl p-8">
             <h3 className="mb-4 text-2xl font-bold">Ready to Build Something Great?</h3>
             <p className="text-muted-foreground mb-6 text-lg">
-              Let's discuss how we can create scalable SaaS solutions together
+              Let&apos;s discuss how we can create scalable SaaS solutions together
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <button className="bg-foreground text-background hover:bg-foreground/90 rounded-lg px-8 py-3 font-medium transition-colors">
