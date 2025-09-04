@@ -10,8 +10,47 @@ A modern, professional portfolio showcasing frontend engineering expertise with 
 - **3D Graphics:** Three.js with @react-three/fiber & @react-three/drei
 - **Geometric Processing:** Delaunator for triangulation
 - **UI Components:** Radix UI primitives
-- **Build Tool:** Turbopack
+- **Build Tool:** Turbopack  
 - **Package Manager:** pnpm
+- **Testing:** Jest 30.1.3 with React Testing Library
+
+## Testing
+
+This project includes a comprehensive Jest testing setup with:
+
+- **Jest 30.1.3** - JavaScript testing framework
+- **React Testing Library 16.3.0** - Testing utilities for React components  
+- **@testing-library/jest-dom** - Custom matchers for DOM testing
+- **jsdom environment** - Browser-like testing environment
+- **TypeScript support** - Full TypeScript integration with ts-node
+- **Next.js integration** - Uses `next/jest` for seamless configuration
+- **Path alias support** - Works with `@/*` import paths
+- **Browser API mocks** - matchMedia, IntersectionObserver, ResizeObserver
+
+### Running Tests
+
+```bash
+# Run all tests once
+pnpm test
+
+# Run tests in watch mode (auto-rerun on changes)  
+pnpm test:watch
+
+# Run tests with coverage (if configured)
+pnpm test -- --coverage
+```
+
+### Test Structure
+
+```
+__tests__/
+├── components/
+│   ├── button.test.tsx      # Button component tests
+│   └── logo.test.tsx        # Logo component tests  
+└── page.test.tsx            # Home page layout tests
+```
+
+**Current test coverage:** 12 tests passing across 3 test suites
 
 ## Project Structure
 
@@ -37,10 +76,17 @@ portfolio/
 │   └── shared/            # Shared/reusable components
 │       ├── error-boundary.tsx    # Global error boundary
 │       └── whale-shark-3d.tsx    # Interactive 3D visualization
+├── __tests__/             # Jest test files
+│   ├── components/        # Component tests
+│   │   ├── button.test.tsx        # Button component tests
+│   │   └── logo.test.tsx          # Logo component tests
+│   └── page.test.tsx      # Page layout tests
 ├── lib/                   # Utilities and constants
 ├── hooks/                 # Custom React hooks (media query, scroll)
 ├── types/                 # TypeScript definitions
-└── config/                # Configuration files (site, navigation)
+├── config/                # Configuration files (site, navigation)
+├── jest.config.ts         # Jest configuration with Next.js integration
+└── jest.setup.ts          # Jest global setup and mocks
 ```
 
 ## Getting Started
@@ -62,9 +108,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Development Commands
 
 ```bash
-pnpm run dev    # Start development server with Turbopack
-pnpm run build  # Build for production
-pnpm start      # Start production server
+pnpm run dev         # Start development server with Turbopack
+pnpm run build       # Build for production
+pnpm start           # Start production server
+pnpm test            # Run Jest tests once
+pnpm test:watch      # Run Jest tests in watch mode
 ```
 
 ## Features
@@ -118,9 +166,17 @@ pnpm start      # Start production server
 - Contact form and project showcase
 - Experience timeline with visual design
 
+**🧪 Phase 4: Testing Infrastructure (Completed)**
+- Jest 30.1.3 testing framework with Next.js 15.5.0 integration
+- React Testing Library for component testing
+- TypeScript support with ts-node configuration  
+- Browser API mocks for matchMedia, IntersectionObserver, ResizeObserver
+- Comprehensive test suite: 12 tests passing across 3 test suites
+- Automated testing for components, layouts, and user interactions
+
 ### 🚀 Coming Soon
 
-**🔗 Phase 4: Enhanced Functionality** 
+**🔗 Phase 5: Enhanced Functionality** 
 - Navigation button functionality
 - Smooth scrolling between sections
 - Contact form submission handling
