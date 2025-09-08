@@ -1,176 +1,141 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
-import { Resend } from 'resend'
-
-// Initialize Resend with API key (we'll use a test key for now)
-const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789')
-
-// Contact form validation schema
-const contactSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  email: z.string().email('Invalid email address'),
-  subject: z.string().min(5, 'Subject must be at least 5 characters').max(200),
-  message: z.string().min(10, 'Message must be at least 10 characters').max(5000),
-  honeypot: z.string().optional(), // Spam protection field
-})
-
-// Rate limiting: Store request timestamps by IP
-const requestTimestamps = new Map<string, number[]>()
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour
-const MAX_REQUESTS_PER_WINDOW = 5
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const timestamps = requestTimestamps.get(ip) || []
-  
-  // Remove old timestamps outside the window
-  const recentTimestamps = timestamps.filter(
-    timestamp => now - timestamp < RATE_LIMIT_WINDOW
-  )
-  
-  if (recentTimestamps.length >= MAX_REQUESTS_PER_WINDOW) {
-    return true
-  }
-  
-  // Add current timestamp and update map
-  recentTimestamps.push(now)
-  requestTimestamps.set(ip, recentTimestamps)
-  
-  return false
-}
+import { ZodError } from 'zod'
+import { contactFormSchema } from '@/lib/validations'
+import { contactRateLimiter } from '@/lib/rate-limiter'
+import { emailService } from '@/lib/email'
+import {
+  getClientIp,
+  successResponse,
+  errorResponse,
+  handleValidationError,
+  getSecurityHeaders,
+} from '@/lib/api-helpers'
 
 export async function POST(request: NextRequest) {
+  const headers = getSecurityHeaders()
+
   try {
     // Get client IP for rate limiting
-    const ip = request.headers.get('x-forwarded-for') || 
-               request.headers.get('x-real-ip') || 
-               'unknown'
+    const clientIp = getClientIp(request)
     
     // Check rate limit
-    if (isRateLimited(ip)) {
+    if (contactRateLimiter.isRateLimited(clientIp)) {
+      const remaining = contactRateLimiter.getRemainingRequests(clientIp)
+      const resetTime = contactRateLimiter.getResetTime(clientIp)
+      
       return NextResponse.json(
-        { error: 'Too many requests. Please try again later.' },
-        { status: 429 }
+        errorResponse(
+          'Too many requests. Please try again later.',
+          `Rate limit exceeded. ${remaining} requests remaining. Resets at ${resetTime ? new Date(resetTime).toISOString() : 'unknown'}`
+        ),
+        { 
+          status: 429,
+          headers: {
+            ...headers,
+            'X-RateLimit-Limit': '5',
+            'X-RateLimit-Remaining': remaining.toString(),
+            ...(resetTime && { 'X-RateLimit-Reset': resetTime.toString() }),
+          }
+        }
       )
     }
     
-    // Parse request body
+    // Parse and validate request body
     const body = await request.json()
-    
-    // Validate the data
-    const validationResult = contactSchema.safeParse(body)
+    const validationResult = contactFormSchema.safeParse(body)
     
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Invalid form data', details: validationResult.error.flatten() },
-        { status: 400 }
+        handleValidationError(validationResult.error),
+        { status: 400, headers }
       )
     }
     
-    const { name, email, subject, message, honeypot } = validationResult.data
+    const formData = validationResult.data
     
     // Check honeypot field for spam
-    if (honeypot) {
+    if (formData.honeypot) {
       // Silently reject spam submissions
       return NextResponse.json(
-        { success: true, message: 'Thank you for your message!' },
-        { status: 200 }
+        successResponse('Thank you for your message!'),
+        { status: 200, headers }
       )
     }
     
-    // Check if we have a valid API key
-    if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY.startsWith('re_')) {
-      // In development/testing, just log the message
+    // Log submission for development
+    if (process.env.NODE_ENV === 'development') {
       console.log('Contact Form Submission:', {
-        name,
-        email,
-        subject,
-        message,
-        timestamp: new Date().toISOString()
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        timestamp: new Date().toISOString(),
+        ip: clientIp,
       })
-      
-      // Return success even without sending email (for development)
-      return NextResponse.json(
-        { 
-          success: true, 
-          message: 'Thank you for your message! (Development mode - email not sent)',
-          dev: true 
-        },
-        { status: 200 }
-      )
     }
     
-    // Send email using Resend
-    try {
-      const data = await resend.emails.send({
-        from: 'Portfolio Contact <onboarding@resend.dev>',
-        to: process.env.CONTACT_EMAIL || 'cphsuan17@gmail.com',
-        replyTo: email,
-        subject: `Portfolio Contact: ${subject}`,
-        html: `
-          <h2>New Contact Form Submission</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Subject:</strong> ${subject}</p>
-          <hr />
-          <h3>Message:</h3>
-          <p>${message.replace(/\n/g, '<br>')}</p>
-          <hr />
-          <p style="color: #666; font-size: 12px;">
-            Sent from your portfolio website at ${new Date().toLocaleString()}
-          </p>
-        `,
-        text: `
-          New Contact Form Submission
-          
-          Name: ${name}
-          Email: ${email}
-          Subject: ${subject}
-          
-          Message:
-          ${message}
-          
-          ---
-          Sent from your portfolio website at ${new Date().toLocaleString()}
-        `
-      })
-      
-      console.log('Email sent successfully:', data)
-      
+    // Attempt to send email
+    const emailResult = await emailService.sendContactEmail(formData)
+    
+    if (emailResult.success) {
       return NextResponse.json(
-        { 
-          success: true, 
-          message: 'Thank you for your message! I\'ll get back to you soon.' 
-        },
-        { status: 200 }
+        successResponse(
+          'Thank you for your message! I\'ll get back to you soon.',
+          { messageId: emailResult.messageId }
+        ),
+        { status: 200, headers }
       )
-    } catch (emailError) {
-      console.error('Failed to send email:', emailError)
+    } else {
+      // Log error but still return success to user
+      console.error('Email send failed:', emailResult.error)
       
-      // Still return success to user but log the error
       return NextResponse.json(
-        { 
-          success: true, 
-          message: 'Thank you for your message!' 
-        },
-        { status: 200 }
+        successResponse(
+          'Thank you for your message!',
+          { dev: !process.env.RESEND_API_KEY }
+        ),
+        { status: 200, headers }
       )
     }
     
   } catch (error) {
     console.error('Contact form error:', error)
     
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        handleValidationError(error),
+        { status: 400, headers }
+      )
+    }
+    
     return NextResponse.json(
-      { error: 'An error occurred. Please try again later.' },
-      { status: 500 }
+      errorResponse(
+        'An error occurred. Please try again later.',
+        error instanceof Error ? error.message : 'Unknown error'
+      ),
+      { status: 500, headers }
     )
   }
 }
 
 // Handle other methods
 export async function GET() {
+  const headers = getSecurityHeaders()
+  
   return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
+    errorResponse('Method not allowed'),
+    { status: 405, headers }
   )
+}
+
+export async function OPTIONS() {
+  const headers = getSecurityHeaders()
+  
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      ...headers,
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  })
 }

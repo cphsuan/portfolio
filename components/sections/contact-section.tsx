@@ -1,72 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useContactForm } from '@/hooks/use-contact-form'
 
 export function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    honeypot: '' // Hidden field for spam protection
-  })
-  
-  const [formStatus, setFormStatus] = useState<{
-    type: 'idle' | 'loading' | 'success' | 'error'
-    message?: string
-  }>({ type: 'idle' })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.id]: e.target.value
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    setFormStatus({ type: 'loading', message: 'Sending message...' })
-    
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-      
-      const data = await response.json()
-      
-      if (response.ok) {
-        setFormStatus({ 
-          type: 'success', 
-          message: data.message || 'Thank you for your message! I\'ll get back to you soon.' 
-        })
-        
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          subject: '',
-          message: '',
-          honeypot: ''
-        })
-      } else {
-        setFormStatus({ 
-          type: 'error', 
-          message: data.error || 'Something went wrong. Please try again.' 
-        })
-      }
-    } catch (error) {
-      console.error('Form submission error:', error)
-      setFormStatus({ 
-        type: 'error', 
-        message: 'Failed to send message. Please try again later.' 
-      })
-    }
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    onSubmit,
+    isLoading,
+    isSuccess,
+    isError,
+    message,
+  } = useContactForm()
 
   return (
     <section id="contact" className="container mx-auto px-4 py-20">
@@ -153,7 +99,7 @@ export function ContactSection() {
           {/* Contact Form */}
           <div className="bg-muted/30 rounded-lg p-8">
             <h3 className="mb-6 text-xl font-semibold">Send a Message</h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="name" className="mb-2 block text-sm font-medium">
@@ -162,14 +108,19 @@ export function ContactSection() {
                   <input
                     type="text"
                     id="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    minLength={2}
-                    maxLength={100}
-                    className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    {...register('name')}
+                    className={`bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      errors.name ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
                     placeholder="Your name"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? 'name-error' : undefined}
                   />
+                  {errors.name && (
+                    <p id="name-error" className="mt-1 text-sm text-red-600">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-medium">
@@ -178,12 +129,19 @@ export function ContactSection() {
                   <input
                     type="email"
                     id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                    {...register('email')}
+                    className={`bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      errors.email ? 'border-red-500 focus:border-red-500' : ''
+                    }`}
                     placeholder="your.email@example.com"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
                   />
+                  {errors.email && (
+                    <p id="email-error" className="mt-1 text-sm text-red-600">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
               </div>
               <div>
@@ -193,14 +151,19 @@ export function ContactSection() {
                 <input
                   type="text"
                   id="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  minLength={5}
-                  maxLength={200}
-                  className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  {...register('subject')}
+                  className={`bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                    errors.subject ? 'border-red-500 focus:border-red-500' : ''
+                  }`}
                   placeholder="Project inquiry"
+                  aria-invalid={!!errors.subject}
+                  aria-describedby={errors.subject ? 'subject-error' : undefined}
                 />
+                {errors.subject && (
+                  <p id="subject-error" className="mt-1 text-sm text-red-600">
+                    {errors.subject.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label htmlFor="message" className="mb-2 block text-sm font-medium">
@@ -208,45 +171,61 @@ export function ContactSection() {
                 </label>
                 <textarea
                   id="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  minLength={10}
-                  maxLength={5000}
+                  {...register('message')}
                   rows={5}
-                  className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  className={`bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                    errors.message ? 'border-red-500 focus:border-red-500' : ''
+                  }`}
                   placeholder="Tell me about your project..."
+                  aria-invalid={!!errors.message}
+                  aria-describedby={errors.message ? 'message-error' : undefined}
                 ></textarea>
+                {errors.message && (
+                  <p id="message-error" className="mt-1 text-sm text-red-600">
+                    {errors.message.message}
+                  </p>
+                )}
               </div>
               
               {/* Honeypot field for spam protection (hidden) */}
               <input
                 type="text"
-                id="honeypot"
-                value={formData.honeypot}
-                onChange={handleChange}
+                {...register('honeypot')}
                 style={{ display: 'none' }}
                 tabIndex={-1}
                 autoComplete="off"
+                aria-hidden="true"
               />
               
               {/* Status Messages */}
-              {formStatus.type !== 'idle' && (
+              {(isSuccess || isError || message) && (
                 <div className={`rounded-md p-3 text-sm ${
-                  formStatus.type === 'success' ? 'bg-green-500/10 text-green-600' :
-                  formStatus.type === 'error' ? 'bg-red-500/10 text-red-600' :
-                  'bg-blue-500/10 text-blue-600'
+                  isSuccess ? 'bg-green-500/10 text-green-600 border border-green-500/20' :
+                  isError ? 'bg-red-500/10 text-red-600 border border-red-500/20' :
+                  'bg-blue-500/10 text-blue-600 border border-blue-500/20'
                 }`}>
-                  {formStatus.message}
+                  <div className="flex items-start gap-2">
+                    <span className="text-base">
+                      {isSuccess ? '✓' : isError ? '✗' : 'ℹ'}
+                    </span>
+                    <span>{message}</span>
+                  </div>
                 </div>
               )}
               
               <button
                 type="submit"
-                disabled={formStatus.type === 'loading'}
-                className="bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 w-full rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                disabled={isLoading || isSubmitting}
+                className="bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed w-full rounded-md px-4 py-2 text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
               >
-                {formStatus.type === 'loading' ? 'Sending...' : 'Send Message'}
+                {(isLoading || isSubmitting) ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+                    Sending...
+                  </span>
+                ) : (
+                  'Send Message'
+                )}
               </button>
             </form>
           </div>
