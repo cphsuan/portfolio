@@ -2,6 +2,36 @@
 
 A modern, professional portfolio showcasing frontend engineering expertise with an interactive 3D whale shark visualization. Built with cutting-edge technologies including Next.js 15, TypeScript, Three.js, and a fully responsive design.
 
+## 🚀 Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/cphsuan/portfolio.git
+cd portfolio
+
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+cp .env.local.example .env.local
+# Edit .env.local with your configuration
+
+# Start development server
+pnpm run dev
+
+# Open http://localhost:3000
+```
+
+## 📊 Performance Metrics
+
+| Metric | Current | Target | Status |
+|--------|---------|--------|--------|
+| Lighthouse Performance | ~75 | 90+ | 🔧 In Progress |
+| First Contentful Paint | 2.1s | <1.5s | 🔧 In Progress |
+| Time to Interactive | 3.2s | <2.5s | 🔧 In Progress |
+| Cumulative Layout Shift | 0.08 | <0.1 | ✅ Good |
+| Bundle Size (JS) | 280KB | <200KB | 🔧 In Progress |
+
 ## Tech Stack
 
 - **Framework:** Next.js 15.5.0 with App Router
@@ -13,6 +43,8 @@ A modern, professional portfolio showcasing frontend engineering expertise with 
 - **Build Tool:** Turbopack  
 - **Package Manager:** pnpm
 - **Testing:** Jest 30.1.3 with React Testing Library
+- **CI/CD:** GitHub Actions + Vercel
+- **Deployment:** Vercel Platform
 
 ## Testing
 
@@ -174,13 +206,34 @@ pnpm test:watch      # Run Jest tests in watch mode
 - Comprehensive test suite: 12 tests passing across 3 test suites
 - Automated testing for components, layouts, and user interactions
 
-### 🚀 Coming Soon
+### 🚀 In Progress
 
-**🔗 Phase 5: Enhanced Functionality** 
-- Navigation button functionality
-- Smooth scrolling between sections
-- Contact form submission handling
-- Performance monitoring and analytics
+**🔗 Phase 5: Critical Improvements**
+- Contact form API implementation with email service
+- Image optimization with next/image
+- SEO infrastructure (sitemap, robots.txt, structured data)
+- Performance optimizations for mobile devices
+- Error boundary for 3D component failures
+
+### 📅 Planned Improvements
+
+**Week 1 - Critical Fixes:**
+- ✅ Implement working contact form API with validation
+- ✅ Add error handling for 3D components
+- ✅ Create SEO files and structured data
+- ✅ Fix mobile performance issues
+
+**Week 2 - High-Impact Features:**
+- 📸 Add professional images and project screenshots
+- ⚡ Implement lazy loading and code splitting
+- 🎯 Add smooth scroll and micro-interactions
+- 📊 Integrate analytics (Vercel Analytics)
+
+**Week 3 - Professional Polish:**
+- 🌍 Add internationalization (EN/ZH)
+- ♿ Complete accessibility audit
+- 📄 Add resume download feature
+- 🎨 Create custom 404 page
 
 ## About This Portfolio
 
@@ -205,6 +258,36 @@ This portfolio showcases **Vivianne Chao**, a Frontend Engineer currently workin
 5. **Real-time User Analytics** - Tableau dashboards and behavior tracking
 6. **3D Portfolio Website** - This website with Three.js visualization
 
+## 🔧 Architecture Decisions
+
+### Performance First
+- **Turbopack** for faster builds and HMR
+- **Dynamic imports** for code splitting (planned)
+- **Three.js optimization** with useMemo and useCallback (planned)
+- **Image optimization** with next/image (planned)
+
+### Developer Experience
+- **TypeScript strict mode** for type safety
+- **Path aliases** (@/*) for clean imports
+- **Modular architecture** for maintainability
+- **Comprehensive testing** with Jest and RTL
+
+### Design Philosophy
+- **Mobile-first** responsive approach
+- **Accessibility** as a core requirement
+- **Progressive enhancement** for 3D features
+- **Graceful degradation** for older devices
+
+## 🐛 Known Issues & Limitations
+
+| Issue | Impact | Priority | Status |
+|-------|--------|----------|--------|
+| No contact form API | Contact submissions don't work | Critical | 🔧 In Progress |
+| Missing image optimization | Slower load times | High | 📋 Planned |
+| 3D performance on mobile | May crash older devices | High | 🔧 In Progress |
+| No sitemap/robots.txt | Poor SEO | Medium | 📋 Planned |
+| Missing analytics | No visitor insights | Medium | 📋 Planned |
+
 ## Customization Guide
 
 This portfolio can be easily customized for other developers by updating:
@@ -215,7 +298,7 @@ This portfolio can be easily customized for other developers by updating:
 4. **Contact Information** with your professional links
 5. **3D Visualization** can be replaced with other Three.js models or removed entirely
 
-See `CLAUDE.md` for detailed customization instructions.
+See `CLAUDE.md` for detailed customization instructions and improvement priorities.
 
 ## Learn More
 
