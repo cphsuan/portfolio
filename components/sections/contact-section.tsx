@@ -1,4 +1,73 @@
+'use client'
+
+import { useState } from 'react'
+
 export function ContactSection() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+    honeypot: '' // Hidden field for spam protection
+  })
+  
+  const [formStatus, setFormStatus] = useState<{
+    type: 'idle' | 'loading' | 'success' | 'error'
+    message?: string
+  }>({ type: 'idle' })
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.id]: e.target.value
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    setFormStatus({ type: 'loading', message: 'Sending message...' })
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setFormStatus({ 
+          type: 'success', 
+          message: data.message || 'Thank you for your message! I\'ll get back to you soon.' 
+        })
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: '',
+          honeypot: ''
+        })
+      } else {
+        setFormStatus({ 
+          type: 'error', 
+          message: data.error || 'Something went wrong. Please try again.' 
+        })
+      }
+    } catch (error) {
+      console.error('Form submission error:', error)
+      setFormStatus({ 
+        type: 'error', 
+        message: 'Failed to send message. Please try again later.' 
+      })
+    }
+  }
+
   return (
     <section id="contact" className="container mx-auto px-4 py-20">
       <div className="mx-auto max-w-4xl">
@@ -19,7 +88,9 @@ export function ContactSection() {
                   </div>
                   <div>
                     <p className="font-medium">Email</p>
-                    <p className="text-muted-foreground text-sm">cphsuan17@gmail.com</p>
+                    <a href="mailto:cphsuan17@gmail.com" className="text-muted-foreground text-sm hover:underline">
+                      cphsuan17@gmail.com
+                    </a>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -28,7 +99,9 @@ export function ContactSection() {
                   </div>
                   <div>
                     <p className="font-medium">LinkedIn</p>
-                    <p className="text-muted-foreground text-sm">linkedin.com/in/viviannechao</p>
+                    <a href="https://linkedin.com/in/viviannechao" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-sm hover:underline">
+                      linkedin.com/in/viviannechao
+                    </a>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -37,7 +110,9 @@ export function ContactSection() {
                   </div>
                   <div>
                     <p className="font-medium">GitHub</p>
-                    <p className="text-muted-foreground text-sm">github.com/cphsuan</p>
+                    <a href="https://github.com/cphsuan" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-sm hover:underline">
+                      github.com/cphsuan
+                    </a>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -78,7 +153,7 @@ export function ContactSection() {
           {/* Contact Form */}
           <div className="bg-muted/30 rounded-lg p-8">
             <h3 className="mb-6 text-xl font-semibold">Send a Message</h3>
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="name" className="mb-2 block text-sm font-medium">
@@ -87,6 +162,11 @@ export function ContactSection() {
                   <input
                     type="text"
                     id="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    minLength={2}
+                    maxLength={100}
                     className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
                     placeholder="Your name"
                   />
@@ -98,6 +178,9 @@ export function ContactSection() {
                   <input
                     type="email"
                     id="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
                     placeholder="your.email@example.com"
                   />
@@ -110,6 +193,11 @@ export function ContactSection() {
                 <input
                   type="text"
                   id="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  minLength={5}
+                  maxLength={200}
                   className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
                   placeholder="Project inquiry"
                 />
@@ -120,16 +208,45 @@ export function ContactSection() {
                 </label>
                 <textarea
                   id="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  minLength={10}
+                  maxLength={5000}
                   rows={5}
                   className="bg-background border-input focus:border-foreground block w-full rounded-md border px-3 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
                   placeholder="Tell me about your project..."
                 ></textarea>
               </div>
+              
+              {/* Honeypot field for spam protection (hidden) */}
+              <input
+                type="text"
+                id="honeypot"
+                value={formData.honeypot}
+                onChange={handleChange}
+                style={{ display: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+              
+              {/* Status Messages */}
+              {formStatus.type !== 'idle' && (
+                <div className={`rounded-md p-3 text-sm ${
+                  formStatus.type === 'success' ? 'bg-green-500/10 text-green-600' :
+                  formStatus.type === 'error' ? 'bg-red-500/10 text-red-600' :
+                  'bg-blue-500/10 text-blue-600'
+                }`}>
+                  {formStatus.message}
+                </div>
+              )}
+              
               <button
                 type="submit"
-                className="bg-foreground text-background hover:bg-foreground/90 w-full rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                disabled={formStatus.type === 'loading'}
+                className="bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 w-full rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
               >
-                Send Message
+                {formStatus.type === 'loading' ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
@@ -143,12 +260,19 @@ export function ContactSection() {
               Let&apos;s discuss how we can create scalable SaaS solutions together
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <button className="bg-foreground text-background hover:bg-foreground/90 rounded-lg px-8 py-3 font-medium transition-colors">
+              <a 
+                href="mailto:cphsuan17@gmail.com?subject=Schedule%20a%20Call" 
+                className="bg-foreground text-background hover:bg-foreground/90 inline-block rounded-lg px-8 py-3 font-medium transition-colors"
+              >
                 Schedule a Call
-              </button>
-              <button className="border-foreground hover:bg-foreground hover:text-background rounded-lg border px-8 py-3 font-medium transition-colors">
+              </a>
+              <a 
+                href="/resume.pdf" 
+                download 
+                className="border-foreground hover:bg-foreground hover:text-background inline-block rounded-lg border px-8 py-3 font-medium transition-colors"
+              >
                 View Resume
-              </button>
+              </a>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { WhaleSharkScene } from '@/components/shared/whale-shark-3d'
+import { WhaleSharkWrapper } from '@/components/shared/whale-shark-wrapper'
 
 export function HeroSection() {
   return (
@@ -17,18 +17,18 @@ export function HeroSection() {
               Crafting scalable SaaS consoles with React and modern tools
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-              <button className="bg-foreground text-background rounded-lg px-6 py-3 text-sm transition-opacity hover:opacity-90 sm:text-base">
+              <a href="#projects" className="bg-foreground text-background rounded-lg px-6 py-3 text-sm text-center transition-opacity hover:opacity-90 sm:text-base">
                 View Projects
-              </button>
-              <button className="border-foreground hover:bg-foreground hover:text-background rounded-lg border px-6 py-3 text-sm transition-colors sm:text-base">
+              </a>
+              <a href="#contact" className="border-foreground hover:bg-foreground hover:text-background rounded-lg border px-6 py-3 text-sm text-center transition-colors sm:text-base">
                 Contact Me
-              </button>
+              </a>
             </div>
           </div>
 
-          {/* Interactive whale shark - responsive display */}
+          {/* Interactive whale shark - responsive display with error boundary */}
           <div className="mt-4 flex h-[250px] flex-col items-center justify-center sm:h-[300px] md:h-[350px] lg:mt-0 lg:h-[400px] lg:w-[70%] xl:h-[450px]">
-            <WhaleSharkScene />
+            <WhaleSharkWrapper />
           </div>
         </div>
       </div>
